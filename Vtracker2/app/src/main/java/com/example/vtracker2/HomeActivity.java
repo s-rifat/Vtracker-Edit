@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Common.VEHICLE_LIST = true;
                 startActivity(new Intent(HomeActivity.this,AllPeopleActivity.class));
 
             }
@@ -330,6 +331,7 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_find_people) {
+            Common.VEHICLE_LIST = false;
             startActivity(new Intent(HomeActivity.this,AllPeopleActivity.class));
             // Handle the camera action
         } else if (id == R.id.nav_add_people) {

@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        
         super.onCreate(savedInstanceState);
         //  setContentView(R.layout.activity_main);
         Paper.init(this);
@@ -105,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     if (!dataSnapshot.child(firebaseUser.getUid()).exists()) //if key uid does not exist
                                     {
-                                        Common.loggeduser = new User(firebaseUser.getUid(), firebaseUser.getEmail());
+                                        Common.loggeduser = new User(firebaseUser.getUid(), firebaseUser.getEmail(),"1");
                                         //Add to database
                                         user_information.child(Common.loggeduser.getUid())
                                                 .setValue(Common.loggeduser);
@@ -129,6 +128,8 @@ public class MainActivity extends AppCompatActivity {
 
                             }
                         });
+
+
             }
         }
     }

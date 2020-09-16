@@ -7,12 +7,22 @@
         <item
             android:id="@+id/nav_find_people"
             android:icon="@drawable/ic_explore_black_24dp"
-            android:title="Find People" />
+            android:title="Find Vehicle" />
 
         <item
             android:id="@+id/nav_add_people"
             android:icon="@drawable/ic_person_add_black_24dp"
             android:title="Friend Request" />
+
+        <item
+            android:id="@+id/nav_bus_route_list"
+            android:icon="@drawable/ic_baseline_info_24"
+            android:title="Vehicle and Route List" />
+
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_baseline_settings_24"
+            android:title="Settings" />
 
     </group>
 

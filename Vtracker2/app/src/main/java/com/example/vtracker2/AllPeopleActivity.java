@@ -134,6 +134,9 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
         loadUserList();
         loadSearchData();
 
+      //  loadDriverList();
+      //  loadDriverSearchData();
+
 
 
 
@@ -144,6 +147,13 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
         final List<String> lstUserEmail = new ArrayList<>();
         DatabaseReference userList = FirebaseDatabase.getInstance()
                 .getReference(Common.USER_INFORMATION);
+
+        if(Common.VEHICLE_LIST)
+        {
+            userList = FirebaseDatabase.getInstance()
+                    .getReference(Common.Driver_INFORMATION);
+        }
+
         userList.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -157,37 +167,65 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-               firebaseLoadDone.onFirebaseLoadFailed(databaseError.getMessage());
+                firebaseLoadDone.onFirebaseLoadFailed(databaseError.getMessage());
             }
         });
     }
 
+   /* private void loadDriverSearchData() {
+        final List<String> lstUserEmail = new ArrayList<>();
+        DatabaseReference userList = FirebaseDatabase.getInstance()
+                .getReference(Common.Driver_INFORMATION);
+
+        userList.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot userSnapShot:dataSnapshot.getChildren())
+                {
+                    User user = userSnapShot.getValue(User.class);
+                    lstUserEmail.add(user.getEmail());
+                }
+                firebaseLoadDone.onFirebaseLoadUserNameDone(lstUserEmail);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                firebaseLoadDone.onFirebaseLoadFailed(databaseError.getMessage());
+            }
+        });
+    }*/
+
+
     private void loadUserList() {
 
         Query query = FirebaseDatabase.getInstance().getReference().child(Common.USER_INFORMATION);
+        if(Common.VEHICLE_LIST)
+        {
+            query = FirebaseDatabase.getInstance().getReference().child(Common.Driver_INFORMATION);
+        }
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
                 .setQuery(query,User.class)
                 .build();
         adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull final User model) {
-                   if(model.getEmail().equals(Common.loggeduser.getEmail()))
-                   {
-                        holder.txt_user_email.setText(new StringBuilder(model.getEmail()).append(" (me)"));
-                        holder.txt_user_email.setTypeface(holder.txt_user_email.getTypeface(), Typeface.ITALIC);
-                   }
-                   else
-                   {
-                       holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
-                   }
-                   //event
-                   holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
-                       @Override
-                       public void onItemClickListener(View view, int position) {
-                           //implement late
-                           showDialogueRequest(model);
-                       }
-                   });
+                if(model.getEmail().equals(Common.loggeduser.getEmail()))
+                {
+                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()).append(" (me)"));
+                    holder.txt_user_email.setTypeface(holder.txt_user_email.getTypeface(), Typeface.ITALIC);
+                }
+                else
+                {
+                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
+                }
+                //event
+                holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
+                    @Override
+                    public void onItemClickListener(View view, int position) {
+                        //implement late
+                        showDialogueRequest(model);
+                    }
+                });
             }
 
             @NonNull
@@ -204,105 +242,238 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
         recycler_all_user.setAdapter(adapter);
     }
 
-       private void showDialogueRequest(final User model) {
-           AlertDialog.Builder alertDialog = new AlertDialog.Builder(this,R.style.MyRequestDialog);
-           alertDialog.setTitle("Request Friend");
-           alertDialog.setMessage("Do you want to send friend request to "+model.getEmail());
-           alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+   /* private void loadDriverList() {
 
-           alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialogInterface, int i) {
-                    dialogInterface.dismiss();
-               }
-           });
-           alertDialog.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
-               @Override
-               public void onClick(DialogInterface dialogInterface, int i) {
-                   //Add to accept list
-                   DatabaseReference acceptList = FirebaseDatabase.getInstance()
-                           .getReference(Common.USER_INFORMATION)
-                           .child(Common.loggeduser.getUid())
-                           .child(Common.ACCEPT_LIST);
+        Query query = FirebaseDatabase.getInstance().getReference().child(Common.Driver_INFORMATION);
+        FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
+                .setQuery(query,User.class)
+                .build();
+        adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull final User model) {
+                if(model.getEmail().equals(Common.loggeduser.getEmail()))
+                {
+                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()).append(" (me)"));
+                    holder.txt_user_email.setTypeface(holder.txt_user_email.getTypeface(), Typeface.ITALIC);
+                }
+                else
+                {
+                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
+                }
+                //event
+                holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
+                    @Override
+                    public void onItemClickListener(View view, int position) {
+                        //implement late
+                        showDriverDialogueRequest(model);
+                    }
+                });
+            }
 
-                   acceptList.orderByKey().equalTo(model.getUid())
-                           .addListenerForSingleValueEvent(new ValueEventListener() {
-                               @Override
-                               public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                   if(dataSnapshot.getValue()==null)//if not friend before
-                                       sendFriendRequest(model);
-                                   else
-                                       Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
-                               }
+            @NonNull
+            @Override
+            public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                View itemView = LayoutInflater.from(viewGroup.getContext())
+                        .inflate(R.layout.layout_user,viewGroup,false);
+                return new UserViewHolder(itemView);
+            }
+        };
 
-                               @Override
-                               public void onCancelled(@NonNull DatabaseError databaseError) {
+        //dont forget this line if you dont want all your blank line in load user
+        adapter.startListening();
+        recycler_all_user.setAdapter(adapter);
+    }*/
 
-                               }
-                           });
+    private void showDialogueRequest(final User model) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this,R.style.MyRequestDialog);
+     /*   if(Common.VEHICLE_LIST)
+        {
+            alertDialog.setTitle("Add to list");
+            alertDialog.setMessage("Do you want to send "+model.getEmail()+" to your home list?");
+            alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+        }*/
+
+            alertDialog.setTitle("Request Friend");
+            alertDialog.setMessage("Do you want to send friend request to "+model.getEmail());
+            alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
 
 
-               }
-           });
-           alertDialog.show();// don't forget it!
-       }
 
-       private void sendFriendRequest(final User model) {
+        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Add to accept list
+                final DatabaseReference acceptList = FirebaseDatabase.getInstance()
+                        .getReference(Common.USER_INFORMATION)
+                        .child(Common.loggeduser.getUid())
+                        .child(Common.ACCEPT_LIST);
+
+                final DatabaseReference acceptList2 = FirebaseDatabase.getInstance()
+                        .getReference(Common.Driver_INFORMATION)
+                        .child(model.getUid())
+                        .child(Common.ACCEPT_LIST);
+
+                final DatabaseReference acceptList3 = FirebaseDatabase.getInstance()
+                        .getReference(Common.USER_INFORMATION)
+                        .child(model.getUid())
+                        .child(Common.ACCEPT_LIST);
+
+                acceptList.orderByKey().equalTo(model.getUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue()==null)//if not friend before
+                                {
+
+                                    //acceptList.setValue(model);
+                                 //   acceptList2.setValue(Common.loggeduser);
+
+
+                                   if(Common.VEHICLE_LIST)
+                                   {
+                                        acceptList.child(model.getUid()).setValue(model);
+                                        acceptList2.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
+                                    }
+                                    else
+                                    {
+                                        //sendFriendRequest(model);
+                                        acceptList.child(model.getUid()).setValue(model);
+                                        acceptList3.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
+                                    }
+
+                                }
+
+                                else
+                                    Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+            }
+        });
+        alertDialog.show();// don't forget it!
+    }
+
+   /* private void showDriverDialogueRequest(final User model) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(this,R.style.MyRequestDialog);
+        alertDialog.setTitle("Request Friend");
+        alertDialog.setMessage("Do you want to send friend request to "+model.getEmail());
+        alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+
+        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        alertDialog.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                //Add to accept list
+                final DatabaseReference acceptList = FirebaseDatabase.getInstance()
+                        .getReference(Common.USER_INFORMATION)
+                        .child(Common.loggeduser.getUid())
+                        .child(Common.ACCEPT_LIST);
+
+                final DatabaseReference acceptList2 = FirebaseDatabase.getInstance()
+                        .getReference(Common.USER_INFORMATION)
+                        .child(Common.loggeduser.getUid())
+                        .child(Common.ACCEPT_LIST);
+
+
+                acceptList.orderByKey().equalTo(model.getUid())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if(dataSnapshot.getValue()==null)//if not friend before
+                                {
+                                    acceptList.setValue(model);
+                                    acceptList2.setValue(Common.loggeduser);
+                                }
+
+                                else
+                                    Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+
+            }
+        });
+        alertDialog.show();// don't forget it!
+    }*/
+
+    private void sendFriendRequest(final User model) {
         //get token to send
-           DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(Common.TOKENS);
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference(Common.TOKENS);
 
-           tokens.orderByKey().equalTo(model.getUid())
-                   .addListenerForSingleValueEvent(new ValueEventListener() {
-                       @Override
-                       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                           if(dataSnapshot.getValue() == null)
-                               Toast.makeText(AllPeopleActivity.this,"Token Error",Toast.LENGTH_SHORT).show();
-                           else
-                           {
-                               //create request
-                               Request request = new Request();
-                               //create data
-                               Map<String,String> dataSend = new HashMap<>();
-                               dataSend.put(Common.FROM_UID,Common.loggeduser.getUid());
-                               dataSend.put(Common.FROM_NAME,Common.loggeduser.getEmail());
+        tokens.orderByKey().equalTo(model.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.getValue() == null)
+                            Toast.makeText(AllPeopleActivity.this,"Token Error",Toast.LENGTH_SHORT).show();
+                        else
+                        {
+                            //create request
+                            Request request = new Request();
+                            //create data
+                            Map<String,String> dataSend = new HashMap<>();
+                            dataSend.put(Common.FROM_UID,Common.loggeduser.getUid());
+                            dataSend.put(Common.FROM_NAME,Common.loggeduser.getEmail());
 
-                               dataSend.put(Common.TO_UID,model.getUid());
-                               dataSend.put(Common.TO_NAME,model.getEmail());
+                            dataSend.put(Common.TO_UID,model.getUid());
+                            dataSend.put(Common.TO_NAME,model.getEmail());
 
-                               request.setTo(dataSnapshot.child(model.getUid()).getValue(String.class));
-                               request.setData(dataSend);
-                               //send
+                            request.setTo(dataSnapshot.child(model.getUid()).getValue(String.class));
+                            request.setData(dataSend);
+                            //send
 
-                               compositeDisposable.add(ifcmService.sendFriendRequestToUser(request)
-                                       .subscribeOn(Schedulers.io())
-                                       .observeOn(AndroidSchedulers.mainThread())
-                                       .subscribe(new Consumer<MyResponse>() {
-                                           @Override
-                                           public void accept(MyResponse myResponse) throws Exception {
-                                               if (myResponse.success == 1)
-                                                   Toast.makeText(AllPeopleActivity.this, "Request Sent!", Toast.LENGTH_LONG).show();
-                                           }
-                                       }, new Consumer<Throwable>() {
-                                           @Override
-                                           public void accept(Throwable throwable) throws Exception {
-                                               Toast.makeText(AllPeopleActivity.this,throwable.getMessage(),Toast.LENGTH_LONG).show();
-                                           }
-                                       }));
+                            compositeDisposable.add(ifcmService.sendFriendRequestToUser(request)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(new Consumer<MyResponse>() {
+                                        @Override
+                                        public void accept(MyResponse myResponse) throws Exception {
+                                            if (myResponse.success == 1)
+                                                Toast.makeText(AllPeopleActivity.this, "Request Sent!", Toast.LENGTH_LONG).show();
+                                        }
+                                    }, new Consumer<Throwable>() {
+                                        @Override
+                                        public void accept(Throwable throwable) throws Exception {
+                                            Toast.makeText(AllPeopleActivity.this,throwable.getMessage(),Toast.LENGTH_LONG).show();
+                                        }
+                                    }));
 
-                           }
-                       }
+                        }
+                    }
 
-                       @Override
-                       public void onCancelled(@NonNull DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                       }
-                   });
-       }
-       //cntrl+o
+                    }
+                });
+    }
+    //cntrl+o
 
 
     @Override
-   protected void onStop() {
+    protected void onStop() {
         if(adapter!=null)
             adapter.stopListening();
         if(searchAdapter!=null)
@@ -331,6 +502,13 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                 .getReference(Common.USER_INFORMATION)
                 .orderByChild("name")
                 .startAt(text_search);
+        if(Common.VEHICLE_LIST)
+        {
+             query = FirebaseDatabase.getInstance()
+                    .getReference(Common.Driver_INFORMATION)
+                    .orderByChild("name")
+                    .startAt(text_search);
+        }
         FirebaseRecyclerOptions<User> options = new FirebaseRecyclerOptions.Builder<User>()
                 .setQuery(query,User.class)
                 .build();
@@ -364,7 +542,12 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
             }
         };
 
-        //dont forget this line if you dont want all your blank line in load user
+
+
+
+
+
+            //dont forget this line if you dont want all your blank line in load user
         searchAdapter.startListening();
         recycler_all_user.setAdapter(searchAdapter);
 

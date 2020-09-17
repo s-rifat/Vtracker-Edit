@@ -338,13 +338,13 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                                    if(Common.VEHICLE_LIST)
                                    {
                                         acceptList.child(model.getUid()).setValue(model);
-                                        acceptList2.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
+                                       // acceptList2.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
                                     }
                                     else
                                     {
-                                        //sendFriendRequest(model);
-                                        acceptList.child(model.getUid()).setValue(model);
-                                        acceptList3.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
+                                        sendFriendRequest(model);
+                                       // acceptList.child(model.getUid()).setValue(model);
+                                        //acceptList3.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
                                     }
 
                                 }

@@ -286,16 +286,20 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
 
     private void showDialogueRequest(final User model) {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this,R.style.MyRequestDialog);
-     /*   if(Common.VEHICLE_LIST)
+       if(Common.VEHICLE_LIST)
         {
             alertDialog.setTitle("Add to list");
-            alertDialog.setMessage("Do you want to send "+model.getEmail()+" to your home list?");
+            alertDialog.setMessage("Do you want to add "+model.getEmail()+" to your home list?");
             alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
-        }*/
+        }
+       else
+       {
+           alertDialog.setTitle("Request Friend");
+           alertDialog.setMessage("Do you want to send friend request to "+model.getEmail());
+           alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+       }
 
-            alertDialog.setTitle("Request Friend");
-            alertDialog.setMessage("Do you want to send friend request to "+model.getEmail());
-            alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+
 
 
 
@@ -305,7 +309,10 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                 dialogInterface.dismiss();
             }
         });
-        alertDialog.setPositiveButton("SEND", new DialogInterface.OnClickListener() {
+        String s = "SEND";
+        if(Common.VEHICLE_LIST)
+            s = "ADD";
+        alertDialog.setPositiveButton(s, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 //Add to accept list
@@ -338,6 +345,8 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                                    if(Common.VEHICLE_LIST)
                                    {
                                         acceptList.child(model.getUid()).setValue(model);
+                                       Toast.makeText(AllPeopleActivity.this, "Added to your home list!", Toast.LENGTH_LONG).show();
+
                                        // acceptList2.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
                                     }
                                     else
@@ -350,7 +359,15 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                                 }
 
                                 else
-                                    Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
+                                {
+                                    if(Common.VEHICLE_LIST)
+                                    {
+                                        Toast.makeText(AllPeopleActivity.this,model.getEmail()+ " is already added",Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                        Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
+                                }
+
                             }
 
                             @Override

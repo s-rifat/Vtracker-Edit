@@ -13,6 +13,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +40,7 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -176,7 +178,7 @@ public class HomeActivity extends AppCompatActivity
                 for(DataSnapshot userSnapShot:dataSnapshot.getChildren())
                 {
                     User user = userSnapShot.getValue(User.class);
-                    lstUserEmail.add(user.getEmail());
+                    lstUserEmail.add(user.getRout());
                 }
                 firebaseLoadDone.onFirebaseLoadUserNameDone(lstUserEmail);
             }
@@ -189,6 +191,8 @@ public class HomeActivity extends AppCompatActivity
 
 
     }
+
+
 
     private void loadFriendList() {
         Query query = FirebaseDatabase.getInstance()
@@ -203,7 +207,7 @@ public class HomeActivity extends AppCompatActivity
         adapter = new FirebaseRecyclerAdapter<User, UserViewHolder>(options) {
             @Override
             protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull final User model) {
-                holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
+                holder.txt_user_email.setText(new StringBuilder(model.getRout()));
 
                 holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
                     @Override
@@ -211,15 +215,22 @@ public class HomeActivity extends AppCompatActivity
                         //show tracking
                         Common.trackingUser = model;
                         startActivity(new Intent(HomeActivity.this,TrackingActivity.class));
+
                     }
+
+
+
+
                 });
+
+                
             }
 
             @NonNull
             @Override
             public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
                 View itemView = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_user,viewGroup,false);
+                        .inflate(R.layout.layout_direction,viewGroup,false);
                 return new UserViewHolder(itemView);
             }
         };
@@ -296,7 +307,10 @@ public class HomeActivity extends AppCompatActivity
                         Common.trackingUser = model;
                         startActivity(new Intent(HomeActivity.this,TrackingActivity.class));
 
+
                     }
+
+
                 });
             }
 
@@ -340,6 +354,12 @@ public class HomeActivity extends AppCompatActivity
 
 
         } else if (id == R.id.nav_sign_out) {
+
+            FirebaseAuth.getInstance().signOut();
+            Toast.makeText(HomeActivity.this, "Successfully logged out", Toast.LENGTH_SHORT).show();
+            finish();
+            startActivity(new Intent(HomeActivity.this,MainActivity.class));
+
 
         }
 

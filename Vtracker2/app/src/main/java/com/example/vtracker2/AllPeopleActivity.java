@@ -63,6 +63,7 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
 
 
 
+    
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -73,6 +74,12 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
         //init view
 
         searchBar = (MaterialSearchBar)findViewById(R.id.material_search_bar);
+        ///
+
+
+
+
+        ///
         searchBar.setCardViewElevation(10);
         searchBar.addTextChangeListener(new TextWatcher() {
 
@@ -143,6 +150,8 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
 
     }
 
+
+
     private void loadSearchData() {
         final List<String> lstUserEmail = new ArrayList<>();
         DatabaseReference userList = FirebaseDatabase.getInstance()
@@ -160,7 +169,8 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                 for(DataSnapshot userSnapShot:dataSnapshot.getChildren())
                 {
                     User user = userSnapShot.getValue(User.class);
-                    lstUserEmail.add(user.getEmail());
+                   // lstUserEmail.add(user.getEmail());
+                    lstUserEmail.add(user.getRout());
                 }
                 firebaseLoadDone.onFirebaseLoadUserNameDone(lstUserEmail);
             }
@@ -211,12 +221,12 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
             protected void onBindViewHolder(@NonNull UserViewHolder holder, int position, @NonNull final User model) {
                 if(model.getEmail().equals(Common.loggeduser.getEmail()))
                 {
-                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()).append(" (me)"));
+                    holder.txt_user_email.setText(new StringBuilder(model.getRout()).append(" (me)"));
                     holder.txt_user_email.setTypeface(holder.txt_user_email.getTypeface(), Typeface.ITALIC);
                 }
                 else
                 {
-                    holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
+                    holder.txt_user_email.setText(new StringBuilder(model.getRout()));
                 }
                 //event
                 holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
@@ -225,15 +235,28 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                         //implement late
                         showDialogueRequest(model);
                     }
+
+
                 });
             }
 
             @NonNull
             @Override
             public UserViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                View itemView = LayoutInflater.from(viewGroup.getContext())
-                        .inflate(R.layout.layout_user,viewGroup,false);
-                return new UserViewHolder(itemView);
+                if(Common.VEHICLE_LIST)
+                {
+                    View itemView = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_bus,viewGroup,false);
+                    return new UserViewHolder(itemView);
+                }
+                else
+                {
+                    View itemView = LayoutInflater.from(viewGroup.getContext())
+                            .inflate(R.layout.layout_user,viewGroup,false);
+                    return new UserViewHolder(itemView);
+                }
+
+
             }
         };
 
@@ -289,8 +312,8 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
        if(Common.VEHICLE_LIST)
         {
             alertDialog.setTitle("Add to list");
-            alertDialog.setMessage("Do you want to add "+model.getEmail()+" to your home list?");
-            alertDialog.setIcon(R.drawable.ic_account_circle_black_24dp);
+            alertDialog.setMessage("Do you want to add "+model.getBusName()+" to your bus and friend list?");
+            alertDialog.setIcon(R.drawable.ic_baseline_directions_bus_24);
         }
        else
        {
@@ -345,7 +368,7 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                                    if(Common.VEHICLE_LIST)
                                    {
                                         acceptList.child(model.getUid()).setValue(model);
-                                       Toast.makeText(AllPeopleActivity.this, "Added to your home list!", Toast.LENGTH_LONG).show();
+                                       Toast.makeText(AllPeopleActivity.this, model.getBusName() + " is Added to your bus and friend list", Toast.LENGTH_LONG).show();
 
                                        // acceptList2.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
                                     }
@@ -362,7 +385,7 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                                 {
                                     if(Common.VEHICLE_LIST)
                                     {
-                                        Toast.makeText(AllPeopleActivity.this,model.getEmail()+ " is already added",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(AllPeopleActivity.this,model.getBusName()+ " is already added",Toast.LENGTH_SHORT).show();
                                     }
                                     else
                                         Toast.makeText(AllPeopleActivity.this,"You and "+model.getEmail()+ " already are friends",Toast.LENGTH_SHORT).show();
@@ -542,11 +565,13 @@ public class AllPeopleActivity extends AppCompatActivity implements IFirebaseLoa
                     holder.txt_user_email.setText(new StringBuilder(model.getEmail()));
                 }
                 //event
-                holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener() {
+                holder.setiRecyclerItemClickListener(new IRecyclerItemClickListener () {
                     @Override
                     public void onItemClickListener(View view, int position) {
                         showDialogueRequest(model);
                     }
+
+
                 });
             }
 

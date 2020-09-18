@@ -34,7 +34,8 @@ import java.util.List;
 
 import io.paperdb.Paper;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
+
     DatabaseReference user_information;
     private static final int MY_REQUEST_CODE = 7117;
     List<AuthUI.IdpConfig> providers;
@@ -42,9 +43,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //  setContentView(R.layout.activity_main);
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-       /* Paper.init(this);
+       // setContentView(R.layout.activity_login);
+        Paper.init(this);
         //init firebase
 
         user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
@@ -64,19 +64,19 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(MainActivity.this, "You must accept permission", Toast.LENGTH_SHORT);
+                        Toast.makeText(LoginActivity.this, "You must accept permission", Toast.LENGTH_SHORT);
                     }
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
 
                     }
-                }).check();*/
+                }).check();
 
 
     }
 
-  /*  private void showSignInOptions() {
+    private void showSignInOptions() {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             IdpResponse response = IdpResponse.fromResultIntent(data);
             if (resultCode == RESULT_OK) {
 
-               final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+                final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
                 //check if user exists on database
                 user_information.orderByKey()
                         .equalTo(firebaseUser.getUid())
@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI() {
         //navigate home
-        startActivity(new Intent(MainActivity.this, HomeActivity.class));
+        startActivity(new Intent(LoginActivity.this, HomeActivity.class));
         finish();
     }
 
@@ -154,11 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }*/
+    }
 }
-
-
-

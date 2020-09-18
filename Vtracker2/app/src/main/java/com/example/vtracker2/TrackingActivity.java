@@ -41,6 +41,12 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
         trackingUserLocation = FirebaseDatabase.getInstance()
                 .getReference(Common.PUBLIC_LOCATION)
                 .child(Common.trackingUser.getUid());
+        if(!Common.trackingUser.getEmail().toString().equals(Common.trackingUser.getRout().toString()))
+        {
+            trackingUserLocation = FirebaseDatabase.getInstance()
+                    .getReference(Common.Driver_LOCATION)
+                    .child(Common.trackingUser.getUid());
+        }
 
         trackingUserLocation.addValueEventListener(this);
     }

@@ -2,18 +2,18 @@ package com.example.vtracker2;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,9 +23,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -213,17 +213,22 @@ public class HomeActivity extends AppCompatActivity
                     @Override
                     public void onItemClickListener(View view, int position) {
                         //show tracking
-                        Common.trackingUser = model;
-                        startActivity(new Intent(HomeActivity.this,TrackingActivity.class));
+                      // Common.trackingUser = model;
+                       showTrackRemoveDialog(model);
+                       // startActivity(new Intent(HomeActivity.this,TrackingActivity.class));
 
                     }
 
-
-
-
                 });
 
-                
+
+
+
+
+               
+
+
+
             }
 
             @NonNull
@@ -236,6 +241,81 @@ public class HomeActivity extends AppCompatActivity
         };
         adapter.stopListening();
         recycler_friend_list.setAdapter(adapter);
+    }
+
+    private void showTrackRemoveDialog(final User model) {
+
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater =getLayoutInflater();
+
+        final View dialogView = inflater.inflate(R.layout.track_remove_dialog,null);
+
+        dialogBuilder.setView(dialogView);
+
+        final Button buttonTrack = (Button) dialogView.findViewById(R.id.buttonTrack);
+
+        final Button buttonRemove = (Button) dialogView.findViewById(R.id.buttonRemove);
+
+        dialogBuilder.setTitle("Track or Remove");
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+
+        buttonTrack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Common.trackingUser = model;
+                startActivity(new Intent(HomeActivity.this,TrackingActivity.class));
+                alertDialog.dismiss();
+            }
+        });
+
+        buttonRemove.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(HomeActivity.this,R.style.MyRequestDialog);
+                alertDialog2.setTitle("DELETE");
+                alertDialog2.setMessage("Do you want to delete "+model.getRout ()+" from list");
+                alertDialog2.setIcon(R.drawable.ic_baseline_delete_24);
+
+                alertDialog2.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                alertDialog2.setPositiveButton("DELETE", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        final DatabaseReference friend = FirebaseDatabase.getInstance()
+                                .getReference(Common.USER_INFORMATION)
+                                .child(Common.loggeduser.getUid())
+                                .child(Common.ACCEPT_LIST)
+                                .child (model.getUid ());
+                        friend.removeValue ();
+                       if(model.getRout ().toString ().equals (model.getEmail ().toString ()))
+                       {
+                           final DatabaseReference friend2 = FirebaseDatabase.getInstance()
+                                   .getReference(Common.USER_INFORMATION)
+                                   .child(model.getUid())
+                                   .child(Common.ACCEPT_LIST)
+                                   .child (Common.loggeduser.getUid());
+                           friend2.removeValue ();
+                       }
+
+                       Toast.makeText(HomeActivity.this,model.getRout ()+ " deleted successfully",Toast.LENGTH_SHORT).show();
+
+
+                    }
+                });
+                alertDialog2.show ();
+                alertDialog.dismiss();
+            }
+        });
+
+
     }
 
     @Override

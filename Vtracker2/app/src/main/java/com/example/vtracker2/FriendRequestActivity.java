@@ -218,7 +218,8 @@ public class FriendRequestActivity extends AppCompatActivity implements IFirebas
                 .getReference(Common.USER_INFORMATION)
                 .child(model.getUid())
                 .child(Common.ACCEPT_LIST);
-        acceptList.child(model.getUid()).setValue(Common.loggeduser);
+        acceptList.child(Common.loggeduser.getUid()).setValue(Common.loggeduser);
+
     }
 
     private void addToAcceptList(User model) {
@@ -228,6 +229,7 @@ public class FriendRequestActivity extends AppCompatActivity implements IFirebas
                 .getReference(Common.USER_INFORMATION)
                 .child(Common.loggeduser.getUid())
                 .child(Common.ACCEPT_LIST);
+        model.setRout (model.getEmail ());
         acceptList.child(model.getUid()).setValue(model);
     }
 

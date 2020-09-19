@@ -23,6 +23,7 @@ public class Common {
     public static final String FRIEND_REQUEST = "FriendRequests" ;
     public static final String PUBLIC_LOCATION = "publicLocation" ;
     public static final String Driver_LOCATION = "driverLocation" ;
+    public static final String ROUT = "rout" ;
     public static boolean VEHICLE_LIST = true;
     public static User loggeduser;
     public static User trackingUser;

@@ -7,4 +7,5 @@ public interface IRecyclerItemClickListener {
 
     void onItemClickListener(View view,int position);
 
+
 }

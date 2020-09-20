@@ -424,7 +424,13 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_find_people) {
+        if (id == R.id.nav_find_vehicle) {
+            Common.VEHICLE_LIST = true;
+            startActivity(new Intent(HomeActivity.this,AllPeopleActivity.class));
+
+        }
+
+       else  if (id == R.id.nav_find_people) {
             Common.VEHICLE_LIST = false;
             startActivity(new Intent(HomeActivity.this,AllPeopleActivity.class));
             // Handle the camera action
@@ -433,7 +439,17 @@ public class HomeActivity extends AppCompatActivity
             startActivity(new Intent(HomeActivity.this,FriendRequestActivity.class));
 
 
-        } else if (id == R.id.nav_sign_out) {
+        } else if (id == R.id.nav_settings) {
+
+            if(Common.loggeduser.getNotificationStatus ()=="1")
+            {
+
+            }
+            startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
+
+        }
+
+       else if (id == R.id.nav_sign_out) {
 
             FirebaseAuth.getInstance().signOut();
             Toast.makeText(HomeActivity.this, "Successfully logged out", Toast.LENGTH_SHORT).show();

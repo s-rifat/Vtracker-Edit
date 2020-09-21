@@ -10,9 +10,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingsActivity"></activity>
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".SplashScreen"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
+            <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
 
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter></activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="SETTINGS" />
+        <activity
+            android:name=".LoginActivity"
+            android:label="LOGIN" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -24,17 +34,24 @@
         <activity
             android:name=".TrackingActivity"
             android:label="@string/title_activity_tracking" />
-        <activity android:name=".FriendRequestActivity" />
-        <activity android:name=".AllPeopleActivity" />
+        <activity
+            android:name=".FriendRequestActivity"
+            android:label="FRIEND REQUEST" />
+        <activity
+            android:name=".AllPeopleActivity"
+            android:label="EXPLORE TO TRACK" />
         <activity
             android:name=".HomeActivity"
-            android:label="Bus and Friend List"
+            android:label="BUS INFO AND FRIEND LIST"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:label="VTRACKER"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
 
@@ -49,10 +66,9 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
 
 </manifest>

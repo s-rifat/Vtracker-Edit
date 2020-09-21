@@ -163,7 +163,7 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
            double distance = calculateDistance (location.getLatitude (),location.getLongitude(),X,Y);
 
-           if(distance<=10 && bol && x!="null" && y!="null")
+           if(distance<=10 && bol && x!="null" && y!="null" && Common.loggeduser.getNotificationStatus ()=="1")
            {
                Toast.makeText (this, X+"  "+Y+" "+location.getLatitude ()+" "+location.getLatitude ()+" "+ distance, Toast.LENGTH_LONG).show ();
                addNotification();
@@ -180,15 +180,15 @@ public class TrackingActivity extends FragmentActivity implements OnMapReadyCall
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void addNotification() {
-        Intent intent=new Intent(getApplicationContext(),MainActivity.class);
+      //  Intent intent=new Intent(getApplicationContext(),TrackingActivity.class);
         String CHANNEL_ID="MYCHANNEL";
         NotificationChannel notificationChannel=new NotificationChannel (CHANNEL_ID,"name",NotificationManager.IMPORTANCE_LOW);
-        PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),1,intent,0);
+      //  PendingIntent pendingIntent=PendingIntent.getActivity(getApplicationContext(),1,intent,0);
         Notification notification=new Notification.Builder(getApplicationContext(),CHANNEL_ID)
                 .setContentText(s+ " Almost there!")
                 .setContentTitle("Hey Get yourself ready!")
-                .setContentIntent(pendingIntent)
-                .addAction(android.R.drawable.sym_action_chat,"500 meter away!",pendingIntent)
+              //  .setContentIntent(pendingIntent)
+             //   .addAction(android.R.drawable.sym_action_chat,"OK",pendingIntent)
                 .setChannelId(CHANNEL_ID)
                 .setSmallIcon(android.R.drawable.sym_action_chat)
                 .build();

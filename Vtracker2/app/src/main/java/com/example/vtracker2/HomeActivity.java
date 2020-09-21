@@ -441,10 +441,7 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_settings) {
 
-            if(Common.loggeduser.getNotificationStatus ()=="1")
-            {
 
-            }
             startActivity(new Intent(HomeActivity.this,SettingsActivity.class));
 
         }

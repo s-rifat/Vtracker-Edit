@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.vtracker2.Model.User;
@@ -42,122 +44,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //  setContentView(R.layout.activity_main);
-        startActivity(new Intent(MainActivity.this, LoginActivity.class));
-       /* Paper.init(this);
-        //init firebase
-
-        user_information = FirebaseDatabase.getInstance().getReference(Common.USER_INFORMATION);
-        //init provider
-        providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build()
-
-        );
-        Dexter.withActivity(this)
-                .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                .withListener(new PermissionListener() {
-                    @Override
-                    public void onPermissionGranted(PermissionGrantedResponse response) {
-                        showSignInOptions();
-                    }
-
-                    @Override
-                    public void onPermissionDenied(PermissionDeniedResponse response) {
-                        Toast.makeText(MainActivity.this, "You must accept permission", Toast.LENGTH_SHORT);
-                    }
-
-                    @Override
-                    public void onPermissionRationaleShouldBeShown(PermissionRequest permission, PermissionToken token) {
-
-                    }
-                }).check();*/
-
-
-    }
-
-  /*  private void showSignInOptions() {
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(), MY_REQUEST_CODE);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == MY_REQUEST_CODE) {
-
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (resultCode == RESULT_OK) {
-
-               final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-                //check if user exists on database
-                user_information.orderByKey()
-                        .equalTo(firebaseUser.getUid())
-                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                if (dataSnapshot.getValue() == null) //if user does not exist
-                                {
-
-                                    if (!dataSnapshot.child(firebaseUser.getUid()).exists()) //if key uid does not exist
-                                    {
-                                        Common.loggeduser = new User(firebaseUser.getUid(), firebaseUser.getEmail(),"1", firebaseUser.getEmail());
-                                        //Add to database
-                                        user_information.child(Common.loggeduser.getUid())
-                                                .setValue(Common.loggeduser);
-
-                                    }
-                                } else //if user available
-                                {
-                                    Common.loggeduser = dataSnapshot.child(firebaseUser.getUid()).getValue(User.class);
-                                }
-                                //save uid to storage to update loction from background
-                                Paper.book().write(Common.USER_UID_SAVE_KEY, Common.loggeduser.getUid());
-                                updateToken(firebaseUser);
-                                setupUI();
-
-
-                            }
-
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-
-                            }
-                        });
-
-
-            }
-        }
-    }
-
-    private void setupUI() {
-        //navigate home
-        startActivity(new Intent(MainActivity.this, HomeActivity.class));
-        finish();
-    }
-
-    private void updateToken(final FirebaseUser firebaseUser) {
-        final DatabaseReference tokens = FirebaseDatabase.getInstance()
-                .getReference(Common.TOKENS);
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnSuccessListener(new OnSuccessListener<InstanceIdResult>() {
-                    @Override
-                    public void onSuccess(InstanceIdResult instanceIdResult) {
-                        tokens.child(firebaseUser.getUid())
-                                .setValue(instanceIdResult.getToken());
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(MainActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+         setContentView(R.layout.activity_main);
+        final Button button = findViewById(R.id.buttonMain);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Code here executes on main thread after user presses button
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
             }
         });
-    }*/
+
+
+
+
+    }
+
+
+
 }
 
 
